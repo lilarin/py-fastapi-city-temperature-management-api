@@ -12,14 +12,14 @@ class Service:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_cities(self) -> Sequence[models.DBCity]:
-        query = select(models.DBCity)
+    async def get_cities(self) -> Sequence[models.City]:
+        query = select(models.City)
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_city(self, city_id: int) -> models.DBCity:
-        query = select(models.DBCity).where(
-            models.DBCity.id == city_id
+    async def get_city(self, city_id: int) -> models.City:
+        query = select(models.City).where(
+            models.City.id == city_id
         )
         result = await self.session.execute(query)
 
@@ -27,8 +27,8 @@ class Service:
 
     async def create_city(
             self, city: schemas.CityCreate
-    ) -> models.DBCity:
-        created_city = models.DBCity(
+    ) -> models.City:
+        created_city = models.City(
             name=city.name,
             additional_info=city.additional_info
         )
@@ -39,7 +39,7 @@ class Service:
 
     async def update_city(
         self, city_id: int, city: schemas.CityCreate
-    ) -> models.DBCity:
+    ) -> models.City:
         updated_city = await self.get_city(city_id)
 
         if updated_city:
@@ -49,7 +49,8 @@ class Service:
             await self.session.refresh(updated_city)
         return updated_city
 
-    async def delete_city(self, city_id: int) -> models.DBCity:
+    async def delete_city(self, city_id: int) -> models.City:
+
         city = await self.get_city(city_id)
 
         if city:
@@ -59,11 +60,11 @@ class Service:
 
     async def get_temperatures(
             self, city_id: int = None
-    ) -> Sequence[models.DBTemperature]:
-        query = select(models.DBTemperature)
+    ) -> Sequence[models.Temperature]:
+        query = select(models.Temperature)
 
         if city_id:
-            query = query.where(models.DBTemperature.city_id == city_id)
+            query = query.where(models.Temperature.city_id == city_id)
 
         result = await self.session.execute(query)
         return result.scalars().all()
@@ -76,7 +77,7 @@ class Service:
         async with httpx.AsyncClient() as client:
             for city in cities:
                 temperature = await weather.fetch_temperatures(client, city)
-                temperature = models.DBTemperature(**temperature.dict())
+                temperature = models.Temperature(**temperature.dict())
 
                 self.session.add(temperature)
                 await self.session.commit()

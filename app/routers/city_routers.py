@@ -19,7 +19,7 @@ router = APIRouter()
 @router.get("/cities/", response_model=Sequence[schemas.City])
 async def read_cities(
         service: crud.Service = Depends(dependencies.get_service)
-) -> Sequence[models.DBCity]:
+) -> Sequence[models.City]:
     cities = await service.get_cities()
     if not cities:
         raise HTTPException(
@@ -33,7 +33,7 @@ async def read_cities(
 async def read_city(
         city_id: int,
         service: crud.Service = Depends(dependencies.get_service)
-) -> models.DBCity:
+) -> models.City:
     city = await service.get_city(city_id=city_id)
     if not city:
         raise HTTPException(
@@ -47,7 +47,7 @@ async def read_city(
 async def create_city(
         city: schemas.CityCreate,
         service: crud.Service = Depends(dependencies.get_service)
-) -> models.DBCity:
+) -> models.City:
     created_city = await service.create_city(city=city)
     if not created_city:
         raise HTTPException(
@@ -62,7 +62,7 @@ async def update_city(
         city_id: int,
         city: schemas.CityCreate,
         service: crud.Service = Depends(dependencies.get_service)
-) -> models.DBCity:
+) -> models.City:
     city = await service.update_city(city_id=city_id, city=city)
     if city is None:
         raise HTTPException(
@@ -76,7 +76,7 @@ async def update_city(
 async def delete_city(
         city_id: int,
         service: crud.Service = Depends(dependencies.get_service)
-) -> models.DBCity:
+) -> models.City:
     db_city = await service.delete_city(city_id=city_id)
     if db_city is None:
         raise HTTPException(

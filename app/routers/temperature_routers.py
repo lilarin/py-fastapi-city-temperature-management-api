@@ -3,7 +3,6 @@ from typing import (
     Dict
 )
 
-import httpx
 from fastapi import (
     APIRouter,
     Depends,
@@ -23,7 +22,7 @@ router = APIRouter()
 @router.get("/temperatures/", response_model=Sequence[schemas.Temperature])
 async def read_temperatures(
         service: crud.Service = Depends(dependencies.get_service)
-) -> Sequence[models.DBTemperature]:
+) -> Sequence[models.Temperature]:
     temperatures = await service.get_temperatures()
     if not temperatures:
         raise HTTPException(
@@ -39,7 +38,7 @@ async def read_temperatures(
 async def read_temperature_by_city_id(
         city_id: int,
         service: crud.Service = Depends(dependencies.get_service)
-) -> Sequence[models.DBTemperature]:
+) -> Sequence[models.Temperature]:
     temperature = await service.get_temperatures(city_id)
     if not temperature:
         raise HTTPException(

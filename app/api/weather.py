@@ -10,6 +10,7 @@ from app import (
     schemas
 )
 
+
 WEATHER_API_KEY = settings.WEATHER_API_KEY
 WEATHER_API_URL = settings.WEATHER_API_URL
 
@@ -21,7 +22,7 @@ async def get_current_time() -> str:
 
 async def fetch_temperatures(
         client: httpx.AsyncClient,
-        city: models.DBCity,
+        city: models.City,
 ):
     try:
         response = await client.get(

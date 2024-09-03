@@ -4,6 +4,7 @@ from app.routers import (
     temperature_routers
 )
 
+
 app = FastAPI()
 
 app.include_router(city_routers.router, prefix="/api")
